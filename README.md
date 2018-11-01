@@ -101,7 +101,7 @@ npm install --save redux-saga-http-requests
 ```
 ## API Reference
 
-* configureRequests - accepts object that defines all apis, returns combined reducers that handle all api actions 
+* configureRequests(config, requests) - Accepts config object that defines baseURL, and request object that defines all apis. Returns combined reducers that handle all api actions 
 
 ```js
 
@@ -124,7 +124,6 @@ const reducers = configureRequests({
   },
 });
 
-const { store, persistor } = configureStore(reducers);
 ```
 
 mandatory parameters for each request:
@@ -135,16 +134,8 @@ mandatory parameters for each request:
 optional parameters for each request:
 
 * method - http method, defeault is get
-* urlBuilder - allows to define url for request dynamically, according to given parameters, for example:
-```js
-    users: {
-      url: 'users',
-      store: 'users',
-      urlBuilder: (url, { id }) => `${url}/${id}`,
-    },
-```
-* requestHandler - allows to do some extra logic before request sent, for example:
-* responseHandler - allows to do some extra logic after resonse returned
+* urlBuilder - allows to define url for request dynamically, according to given parameters, as demonstrated above
+
 * dispatchRequest - dispatches a specific api, for example:
 ```js
 import { dispatchRequest } from 'redux-saga-http-requests';
