@@ -2,7 +2,7 @@
 
 simplify http requests execution in react-native applications, by encapuslating all common logic, using redux as state management, saga as middleware &amp; axios as http client.
 
-see https://github.com/tamirla/redux-saga-http-requests-tester for a sample application that demonstrate usage.
+see [redux-saga-http-requests-tester](https://github.com/tamirla/redux-saga-http-requests-tester) for a sample application that demonstrate usage.
 
 ## Code Example
 
