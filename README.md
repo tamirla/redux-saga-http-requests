@@ -103,7 +103,7 @@ npm install --save redux-saga-http-requests
 ```
 ## API Reference
 
-* configureRequests(config, requests) - Accepts config object that defines baseURL, and request object that defines all apis. Returns combined reducers that handle all api actions 
+* configureRequests(config, requests) - Accepts config object that defines baseURL, and requests object that defines all apis. Returns combined reducers that handle all api actions 
 
 ```js
 
@@ -113,17 +113,41 @@ const reducers = configureRequests({
   config: {
     baseURL: 'https://jsonplaceholder.typicode.com',
   },
-  requests: {
-    todos: {
+   requests: {
+    getTodos: {
       url: 'todos',
       store: 'todos',
     },
-    users: {
+    getUsers: {
       url: 'users',
-      store: 'users',
+      store: 'user',
+      // construct get url with given parameter
       urlBuilder: (url, { id }) => `${url}/${id}`,
+      // optional handlers for request\ersponse
+      requestHandler: (url, params) => {
+        if (params.id === 2) {
+          console.log('returning local response');
+          return {
+            id: 2,
+            name: 'localUser',
+          };
+        }
+        console.log('going to call ', url, ' with params', params);
+        return null;
+      },
+      responseHandler: (params, response) => {
+        console.log('got response for params', params, '->', response);
+        return {
+          ...response,
+          requestParams: params,
+        };
+      },
     },
-  },
+    addPost: {
+      url: 'posts',
+      store: 'newPost',
+      method: 'post',
+    },
 });
 
 ```
@@ -135,7 +159,7 @@ mandatory parameters for each request:
 
 optional parameters for each request:
 
-* method - http method, defeault is get
+* method - http method, default is get
 * urlBuilder - allows to define url for request dynamically, according to given parameters, as demonstrated above
 
 * dispatchRequest - dispatches a specific api, for example:
