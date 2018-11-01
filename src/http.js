@@ -35,9 +35,9 @@ export const extractErrorMessage = (error) => {
   if (hasIn(error, 'response.data.message')) {
     return error.response.data.message;
   }
-  if (hasIn(error, 'request._response')) {
+  if (hasIn(error, 'request.status')) {
     /* eslint-disable no-underscore-dangle */
-    return error.request._response;
+    return `status: ${error.request.status}, response: ${hasIn(error, 'request._response') && error.request._response}`;
   }
   if (error.message) {
     return error.message;
