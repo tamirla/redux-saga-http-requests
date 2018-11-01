@@ -103,7 +103,15 @@ npm install --save redux-saga-http-requests
 ```
 ## API Reference
 
-* configureRequests(config, requests) - Accepts config object that defines baseURL, and requests object that defines all apis. Returns combined reducers that handle all api actions 
+* configureRequests(config, requests) - Accepts config object that defines baseURL, and requests object that defines all apis. Returns combined reducers that handle all api actions. mandatory parameters for each request:
+    * url - the endpoint of this request
+    * store - the store element to which the response will be mapped
+
+  optional parameters for each request:
+    * method - http method, default is get
+    * urlBuilder - allows to define url for request dynamically, according to given parameters, as demonstrated above
+    * requestHandler - callback invoked before executing the request, if returns non-null object it will cancel the request, can be used as to returned cached results
+    * responseHandler - callback invoked after executing the request, can be used to manipulate response, for example adding request params 
 
 ```js
 
@@ -123,7 +131,7 @@ const reducers = configureRequests({
       store: 'user',
       // construct get url with given parameter
       urlBuilder: (url, { id }) => `${url}/${id}`,
-      // optional handlers for request\ersponse
+      // optional handlers for request\response
       requestHandler: (url, params) => {
         if (params.id === 2) {
           console.log('returning local response');
@@ -132,7 +140,7 @@ const reducers = configureRequests({
             name: 'localUser',
           };
         }
-        console.log('going to call ', url, ' with params', params);
+        console.log(`calling ${url} with `, params);
         return null;
       },
       responseHandler: (params, response) => {
@@ -152,17 +160,7 @@ const reducers = configureRequests({
 
 ```
 
-mandatory parameters for each request:
-
-* url - the endpoint of this request
-* store - the store element to which the response will be mapped
-
-optional parameters for each request:
-
-* method - http method, default is get
-* urlBuilder - allows to define url for request dynamically, according to given parameters, as demonstrated above
-
-* dispatchRequest - dispatches a specific api, for example:
+* dispatchRequest(name, params) - dispatches a specific api
 ```js
 import { dispatchRequest } from 'redux-saga-http-requests';
 
@@ -171,7 +169,41 @@ export const fetchUser = id => dispatchRequest('users', { id });
 
 ```
 
-* requestsWatcher - returnrs the saga watcher that handles all api and should be added to rootSaga as demostrated above
-* onRequestCompleted - callback that can be used to dispatch some actions once specific api completed successfully
-* onRequestFailed - callback that can be used to dispatch some actions once specific api failed
-* onAllRequestsFailed - callback that can be used to dispatch some actions once *any* api failed, can be used to show generic error message, etc.
+* requestsWatcher - returnrs the saga watcher that handles all api and should be added to rootSaga
+* onRequestCompleted(api, worker) - callback that can be used to dispatch some actions once specific api completed successfully
+* onRequestFailed(api, worker) - callback that can be used to dispatch some actions once specific api failed
+* onAllRequestsFailed(worker) - callback that can be used to dispatch some actions once *any* api failed, can be used to show generic error message, etc.
+
+```js
+
+import {
+  requestsWatcher,  
+  onRequestCompleted,
+  onRequestFailed,
+  onAllRequestsFailed,
+} from 'redux-saga-http-requests';
+
+function* httpRequestCompletedWatcher() {
+  yield onRequestCompleted(apis.GET_TODOS, props => console.log('http request completed', props));
+}
+
+function* specificHttpRequestFailureWatcher() {
+  yield onRequestFailed(apis.INVALID_API, props => console.log('invalidRequest failed', props));
+}
+
+function* genericHttpRequestFailureWatcher() {
+  yield onAllRequestsFailed(props => console.log('http request failed', props));
+}
+
+
+export const middleware = createSagaMiddleware();
+
+export function* rootSaga() {
+  yield all([
+    requestsWatcher(),
+    httpRequestCompletedWatcher(),
+    specificHttpRequestFailureWatcher(),
+    genericHttpRequestFailureWatcher(),
+  ]);
+}
+```
