@@ -1,6 +1,12 @@
 # redux-saga-http-requests
 
-encapsulates all common logic related to executing http requests, using redux as state management, saga as middleware &amp; axios as http client.
+simplify http requests execution in react-native applications.
+
+## Synopsis
+
+simplify http requests execution in react-native applications, by encapuslating all common logic, using redux as state management, saga as middleware &amp; axios as http client.
+
+see https://github.com/tamirla/redux-saga-http-requests-tester for a sample application that demonstrate usage.
 
 ## Code Example
 
@@ -24,7 +30,7 @@ import { requestsWatcher } from 'redux-saga-http-requests';
 
 export function* rootSaga() {
   yield all([
-    requestsWatcher(), // <-- add requestsWatcher to list of saga, this will handle all requests
+    requestsWatcher(), // <-- add requestsWatcher, this will handle all requests
     // other sagas
   ]);
 }
@@ -47,7 +53,7 @@ const reducers = configureRequests({
   config: {
     baseURL: 'https://jsonplaceholder.typicode.com',
   },
-  // list of all api requests, each request must have url, store & some other option configurations, see below
+  // list of all api requests, each request must have url & store params, and may have some other optional params, see below
   requests: {
     todos: {
       url: 'todos',
