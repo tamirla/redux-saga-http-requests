@@ -1,7 +1,7 @@
 {
   "name": "redux-saga-http-requests",
   "version": "0.1.0",
-  "description": "encapsulates all common logic related to executing http requests, using redux as state management, saga as middleware &amp; axios as http client.",
+  "description": "simplify http requests execution in react-native applications.",
   "main": "./src/index.js",
   "scripts": {
     "test": "jest"

@@ -4,10 +4,6 @@ simplify http requests execution in react-native applications, by encapuslating 
 
 see https://github.com/tamirla/redux-saga-http-requests-tester for a sample application that demonstrate usage.
 
-## Synopsis
-
-simplify http requests execution in react-native applications.
-
 ## Code Example
 
 **actions.js**
